@@ -43,9 +43,7 @@ const Slider = ({
     return { top, left };
   }
 
-  function change({ top, left }) {
-    if (!onChange) return;
-
+  function getXY({ top, left }) {
     const { width, height } = container.current.getBoundingClientRect();
     let dx = 0;
     let dy = 0;
@@ -66,6 +64,12 @@ const Slider = ({
     const x = (dx !== 0 ? parseInt(dx / xstep, 10) * xstep : 0) + xmin;
     const y = (dy !== 0 ? parseInt(dy / ystep, 10) * ystep : 0) + ymin;
 
+    return {x, y}; 
+  }
+
+  function change({ top, left }) {
+    if (!onChange) return;
+    const {x, y} = getXY({top, left});
     onChange({ x, y });
   }
 
@@ -122,7 +126,8 @@ const Slider = ({
     document.removeEventListener('touchcancel', handleDragEnd);
 
     if (onDragEnd) {
-      onDragEnd();
+      const {x, y} = getXY(getPos(e))
+      onDragEnd({x, y}); 
     }
   }
 
